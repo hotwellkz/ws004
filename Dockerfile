@@ -20,6 +20,9 @@ RUN npm install
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
+# Создаем директорию для сессии WhatsApp
+RUN mkdir -p /app/.wwebjs_auth
+
 # Открываем порт
 EXPOSE 3000
 

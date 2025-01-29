@@ -1,7 +1,7 @@
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { Client, LocalAuth } from 'whatsapp-web.js';
+import { Client } from 'whatsapp-web.js';
 import cors from 'cors';
 import qrcode from 'qrcode';
 
@@ -31,7 +31,6 @@ app.get('/health', (req, res) => {
 
 // Инициализация WhatsApp клиента
 const client = new Client({
-    authStrategy: new LocalAuth(),
     puppeteer: {
         args: [
             '--no-sandbox',
