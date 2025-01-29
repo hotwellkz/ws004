@@ -35,7 +35,7 @@ app.get('/health', (req, res) => {
 // Получение списка чатов
 app.get('/chats', async (req, res) => {
     try {
-        if (!client.pupPage) {
+        if (!client?.pupPage) {
             return res.status(400).json({ error: 'WhatsApp не подключен' });
         }
         const allChats = await client.getChats();
@@ -135,9 +135,28 @@ client.on('message', async (message) => {
 });
 
 // Инициализация WhatsApp клиента
-client.initialize().catch(err => {
+let initializationPromise = client.initialize().catch(err => {
     console.error('Ошибка инициализации WhatsApp клиента:', err);
 });
+
+// Обработка завершения работы
+async function shutdown() {
+    console.log('Завершение работы сервера...');
+    try {
+        if (client?.pupPage) {
+            await client.destroy();
+        }
+        server.close();
+        process.exit(0);
+    } catch (error) {
+        console.error('Ошибка при завершении работы:', error);
+        process.exit(1);
+    }
+}
+
+// Обработка сигналов завершения
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
 
 // Обработка WebSocket соединений
 io.on('connection', (socket) => {
@@ -160,7 +179,7 @@ io.on('connection', (socket) => {
 });
 
 // Запуск сервера
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
     console.log(`Сервер запущен на порту ${PORT}`);
 });
